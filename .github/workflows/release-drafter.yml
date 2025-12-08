@@ -1,22 +1,121 @@
-name: Release Drafter
+# ================================================
+# Release Drafter – Clean Semantic Versioning Flow
+# ================================================
 
-on:
-  push:
-    branches:
-      - main
+# --------
+# Release Name & Tag
+# --------
+name-template: "@entiqon/datagrid – v$NEXT_VERSION"
+tag-template: "v$NEXT_VERSION"
+tag-prefix: ""
 
-jobs:
-  update_release_draft:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: write
+# --------
+# Release Notes Template (Required)
+# --------
+template: |
+  ## 🚀 @entiqon/datagrid – Release v$NEXT_VERSION
 
-    steps:
-      - uses: actions/checkout@v6
+  ### 📦 Overview
+  This release includes the following changes:
 
-      - uses: release-drafter/release-drafter@v6
-        with:
-          config-name: release-drafter.yml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  $CHANGES
+
+  ---
+
+  ### 🙌 Contributors
+  $CONTRIBUTORS
+
+# --------
+# Change Line Formatting
+# --------
+change-template: "- $TITLE (#$NUMBER)"
+no-changes-template: "- No user-facing changes."
+
+# --------
+# Semantic Versioning Rules
+# --------
+version-template: "$MAJOR.$MINOR.$PATCH$PRERELEASE"
+version-resolver:
+  major:
+    labels:
+      - breaking
+      - breaking-change
+  minor:
+    labels:
+      - feat
+      - feature
+      - enhancement
+  patch:
+    labels:
+      - fix
+      - bug
+      - hotfix
+  default: patch
+
+# --------
+# Categories (Release Note Sections)
+# --------
+categories:
+  - title: "✨ Features"
+    labels:
+      - feat
+      - feature
+      - enhancement
+
+  - title: "🐛 Fixes"
+    labels:
+      - fix
+      - bug
+      - hotfix
+
+  - title: "⚠️ Breaking Changes"
+    labels:
+      - breaking
+      - breaking-change
+
+  - title: "🧹 Maintenance"
+    labels:
+      - chore
+      - refactor
+      - ci
+      - docs
+      - maintenance
+
+# --------
+# Filters
+# --------
+exclude-labels:
+  - ignore
+
+pull-request-limit: 50
+
+# --------
+# Auto-label Rules
+# --------
+autolabeler:
+  - label: docs
+    files:
+      - "*.md"
+
+  - label: ci
+    files:
+      - ".github/**"
+
+  - label: chore
+    files:
+      - "*.yml"
+      - "*.yaml"
+      - "*.json"
+
+# --------
+# Sorting
+# --------
+sort-by: merged_at
+sort-direction: descending
+
+# --------
+# Release Options
+# --------
+prerelease: false
+include-pre-releases: false
+latest: true
