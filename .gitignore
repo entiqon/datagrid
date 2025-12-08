@@ -1,0 +1,18 @@
+# Node
+node_modules/
+dist/
+build/
+*.log
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Testing / coverage
+coverage/
+.DS_Store
+
+# Environment
+.env
+.env.*

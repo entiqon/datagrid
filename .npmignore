@@ -1,0 +1,10 @@
+src/
+tests/
+.storybook/
+*.config.*
+*.tsbuildinfo
+node_modules/
+coverage/
+.env*
+.idea/
+.vscode/
