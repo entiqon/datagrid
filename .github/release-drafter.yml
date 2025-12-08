@@ -1,0 +1,43 @@
+name-template: "@entiqon/datagrid – v$NEXT_VERSION"
+tag-template: "v$NEXT_VERSION"
+
+template: |
+  ## 🚀 Release v$NEXT_VERSION
+
+  $CHANGES
+
+  ---
+
+  ### Contributors
+  $CONTRIBUTORS
+
+change-template: "- $TITLE (#$NUMBER)"
+no-changes-template: "- No user-facing changes."
+
+version-template: "$MAJOR.$MINOR.$PATCH"
+version-resolver:
+  major:
+    labels: ["breaking", "breaking-change"]
+  minor:
+    labels: ["feat", "feature", "enhancement"]
+  patch:
+    labels: ["fix", "bug", "hotfix", "chore"]
+  default: patch
+
+categories:
+  - title: "✨ Features"
+    labels: ["feature", "enhancement"]
+  - title: "🐛 Fixes"
+    labels: ["fix", "bug"]
+  - title: "⚠️ Breaking Changes"
+    labels: ["breaking", "breaking-change"]
+  - title: "🧹 Maintenance"
+    labels: ["chore", "refactor"]
+
+exclude-labels:
+  - ignore
+
+sort-by: merged_at
+sort-direction: descending
+
+latest: "true"
