@@ -7,20 +7,22 @@
 ![release](https://img.shields.io/github/actions/workflow/status/entiqon/datagrid/release.yml?label=release)
 ![release-drafter](https://img.shields.io/github/actions/workflow/status/entiqon/datagrid/release-drafter.yml?label=release-drafter)
 
-A modern, opinionated, and extensible **DataGrid component library** for React.  
-Designed for performance, flexibility, and developer experience.
+A modern, typed, and extensible **DataGrid library for React**, focused on clean architecture, context-driven state, and a UI-agnostic design that allows consumers to implement their own table or grid renderer.
+
+This version (**0.2.3**) introduces consistent naming, improved barrel exports, and better separation between provider, component, and view renderer.
 
 ---
 
 ## 🚀 Features
 
 - ⚛️ **React-first API**
-- 🧠 **Context-driven state management**
-- 📄 **Pagination, modes, selection state**
-- 🎨 Extensible and customizable architecture
-- 🧪 Built with **Vitest + Testing Library**
-- 🧹 Clean build pipeline using **tsup**
-- 🤖 Automated releases via **Changesets + GitHub Actions**
+- 🧠 **Context-driven state architecture**
+- 🧩 **DataGridProvider** with optional external control
+- 🧭 **Modes system (`DataGridMode`)** for workflows
+- 📄 **Pagination, selection & events**
+- 🎨 UI-agnostic: render any table component (`DataGridView` provided as optional abstraction)
+- 🧪 Vitest + Testing Library included
+- 🤖 Automated versioning + releases using **Changesets + GitHub Actions**
 
 ---
 
@@ -38,68 +40,109 @@ yarn add @entiqon/datagrid
 
 ---
 
-## 🧩 Usage
+# 🧩 Basic Usage
 
 ```tsx
-import DataGrid from '@entiqon/datagrid';
+import DataGrid, { DataGridView } from '@entiqon/datagrid';
 
 export default function App() {
-  return <DataGrid />;
+  return (
+    <DataGrid columns={columns} data={rows}>
+      <DataGridView />
+    </DataGrid>
+  );
 }
 ```
 
-More documentation coming soon as the component evolves.
+`DataGrid` initializes state, pagination, mode handling, and event dispatchers.
+
+`DataGridView` is an optional UI abstraction — you can replace it with **your own table implementation**.
 
 ---
 
-## 🧠 Architecture Overview
+# 🧠 Architecture Overview
 
-The library is structured around:
-
-- `DataGrid` – the main component
-- `DataGridProvider` – context provider
-- `useDataGrid()` – access grid state
-- Hooks for selection, pagination, modes
-
-Tests can be co-located next to components:
+The library follows a clean, layered structure:
 
 ```
 src/
-  datagrid.tsx
-  datagrid.test.tsx
-  context/
-    index.tsx
-    index.test.tsx
+├── DataGrid.tsx            # Main component (default export)
+├── DataGridView.tsx        # Optional table abstraction
+├── DataGridMode.ts         # Mode system
+├── context/
+│   ├── DataGridContext.tsx
+│   ├── DataGridProvider.tsx
+│   ├── DataGridActions.ts
+│   └── DataGridState.ts
+└── hooks/
+    ├── useDataGrid.ts
+    ├── useDataGridEvents.ts
+    └── usePagination.ts
+```
+
+### Core Elements
+
+#### **DataGrid (default export)**
+
+- Initializes provider
+- Wires state, pagination, events, and modes
+- Accepts any UI renderer via children
+
+#### **DataGridProvider**
+
+Use this if you need full control outside the component.
+
+```tsx
+<DataGridProvider columns={columns} data={rows}>
+  <CustomGridRenderer />
+</DataGridProvider>
+```
+
+#### **Hooks**
+
+| Hook                  | Purpose                            |
+| --------------------- | ---------------------------------- |
+| `useDataGrid()`       | Access grid state & actions        |
+| `useDataGridEvents()` | Event registration & listeners     |
+| `usePagination()`     | Exposes pagination state & setters |
+
+#### **DataGridMode**
+
+Now renamed to avoid collisions.
+
+```ts
+type DataGridMode = 'create' | 'update' | 'delete' | 'import' | 'reload' | null;
 ```
 
 ---
 
-## 📚 Roadmap
+# 🧭 Roadmap
 
-- 🔧 Column definitions
-- 🔍 Sorting & filtering
-- 📌 Row actions
+- 🔧 Column definitions & schemas
+- 🔍 Sorting, filtering, and search state
+- 📌 Row actions API
 - 📦 Virtual scrolling
-- 🎨 Theming & styling tokens
-- 🛠 Extensive unit + integration tests
+- 🎨 Theme abstraction
+- 🛠 Additional unit + integration tests
+- 📘 Full professional documentation (post-1.0)
 
 ---
 
-## 🧪 Development
+# 🧪 Development
 
-Run tests:
+### Run tests
 
 ```bash
 npm test
 ```
 
-Run in watch mode:
+### Watch mode
 
 ```bash
 npm run test:watch
 ```
 
-Build:
+### Build
 
 ```bash
 npm run build
@@ -107,29 +150,42 @@ npm run build
 
 ---
 
-## 🚀 Releases & Versioning
+# 🚀 Versioning & Releases (Changesets)
 
-Releases are automated using:
+This project uses:
 
-- **Changesets**
-- **Release Drafter**
-- **GitHub Actions**
-- **npm publish on GitHub Release**
+- **Changesets** for versioning
+- **GitHub Actions** for automated publishing
+- **Release Drafter** for GitHub Release Notes
 
-To propose a version bump:
+### ➤ Creating a changeset
 
 ```bash
 npx changeset
 ```
 
+Choose patch / minor / major, describe your change, and a markdown file will appear in:
+
+```
+.changeset/*.md
+```
+
+### ➤ Publishing (CI)
+
+When merged into `main`, CI:
+
+- Runs `changeset version`
+- Updates `CHANGELOG.md`
+- Bumps `package.json`
+- Creates the GitHub Release draft
+- Publishes to npm
+
 ---
 
-## 📝 License
+# 📝 License
 
 MIT © ENTIQON
 
 ---
-
-## ⭐ Support the Project
 
 If you find this library useful, consider starring the repository ❤️
