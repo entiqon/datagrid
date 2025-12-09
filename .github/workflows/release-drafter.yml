@@ -1,22 +1,33 @@
 name: Release Drafter
 
 on:
+  # Rebuild draft release when PRs change (recommended)
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+      - closed
+
+  # Also rebuild when commits land on main
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, reopened, synchronize]
 
 jobs:
   update_release_draft:
-    permissions:
-      contents: write
-      pull-requests: write
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write        # Required to update releases
+      pull-requests: read    # Required to associate PRs with releases
+
     steps:
-      - name: Run Release Drafter
+      - uses: actions/checkout@v6
+
+      - name: Update release draft
         uses: release-drafter/release-drafter@v6
-        with:
-          config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
