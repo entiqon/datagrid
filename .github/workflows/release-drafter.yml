@@ -24,7 +24,7 @@ jobs:
       pull-requests: read    # Required to associate PRs with releases
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Update release draft
         uses: release-drafter/release-drafter@v6
