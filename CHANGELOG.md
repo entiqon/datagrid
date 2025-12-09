@@ -4,6 +4,17 @@
 
 ### Patch Changes
 
+- 952140e: Stabilize architecture for DataGrid v0.2.3:
+  - Rename Mode → DataGridMode
+  - Add DataGridView abstraction
+  - Improve barrel exports
+  - Clarify provider/component separation
+  - Internal consistency refactor
+
+## 0.2.3
+
+### Patch Changes
+
 - Renamed `Mode` → `ActionMode` to avoid collisions and determine how the component will act.
 - Added `DataGridMode` to identify the kind of data loading and how handle it
 - Added `DataGridView` as optional UI abstraction
