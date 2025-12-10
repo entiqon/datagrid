@@ -1,5 +1,11 @@
 # @entiqon/datagrid
 
+## 0.4.0
+
+### Minor Changes
+
+- 0e6a21d: Add new controlled Sheet component and implement DataGridDialogManager with mode-based titles, descriptions, submit actions, and customizable footers.
+
 ## 0.3.0
 
 ### Minor Changes
