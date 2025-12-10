@@ -1,6 +1,16 @@
 name: Release Drafter
 
 on:
+  # Rebuild draft release when PRs change (recommended)
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+      - closed
+
+  # Also rebuild when commits land on main
   push:
     branches:
       - main
@@ -8,13 +18,16 @@ on:
 jobs:
   update_release_draft:
     runs-on: ubuntu-latest
+
     permissions:
-      contents: write
+      contents: write        # Required to update releases
+      pull-requests: read    # Required to associate PRs with releases
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Update release draft
         uses: release-drafter/release-drafter@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
