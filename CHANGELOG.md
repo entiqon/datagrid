@@ -1,5 +1,11 @@
 # @entiqon/datagrid
 
+## 0.3.0
+
+### Minor Changes
+
+- e581a61: Introduce modular DataGrid architecture with new context slices and hook API.
+
 ## 0.2.3
 
 ### Patch Changes
