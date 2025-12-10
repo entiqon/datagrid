@@ -2,60 +2,48 @@
 
 'use client';
 
-import { ReactNode, useState, useMemo } from 'react';
-import { DataGridContext } from './DataGridContext';
-import type {
-  Identifiable,
-  ActionMode,
-  DataGridMode,
-  Pagination,
-  DataGridContextType,
-} from './DataGridState';
-import { createPaginationActions } from './DataGridActions';
+import { ReactNode } from 'react';
+import type { Identifiable, DataGridMode } from '@contracts';
+
+import { DataGridContext, type DataGridContextValue } from './DataGridContext';
+
+// slice factories
+import { createActionSlice } from './actions';
+import { createPaginationSlice } from './pagination';
+import { createSelectionSlice } from './selection';
+import { createFocusSlice } from './focus';
+import { createDataSlice } from './data';
 
 export interface DataGridProviderProps<T extends Identifiable> {
   children: ReactNode;
-  initialData?: T[];
-  initialTake?: number;
-  initialTotalRows?: number;
+  initialRows?: T[];
   mode?: DataGridMode;
 }
 
+/**
+ * Low-level provider that wires all DataGrid slices into a single context.
+ *
+ * This component is intended to be used internally by the high-level
+ * <DataGrid /> wrapper, not directly by consumers.
+ */
 export function DataGridProvider<T extends Identifiable>({
   children,
-  initialData = [],
-  initialTake = 10,
-  initialTotalRows = 0,
-  mode,
+  initialRows = [],
+  mode = 'client',
 }: DataGridProviderProps<T>) {
-  const [data, setData] = useState<T[]>(initialData);
-  const [currentRow, setCurrentRow] = useState<T | null>(null);
-  const [selectedRows, setSelectedRows] = useState<T[]>([]);
-  const [actionMode, setActionMode] = useState<ActionMode>(null);
+  const dataSlice = createDataSlice<T>(initialRows);
+  const actionSlice = createActionSlice<T>();
+  const paginationSlice = createPaginationSlice();
+  const selectionSlice = createSelectionSlice<T>();
+  const focusSlice = createFocusSlice<T>();
 
-  const [skip, setSkip] = useState(0);
-  const [take, setTake] = useState(initialTake);
-  const [totalRows, setTotalRows] = useState(initialTotalRows);
-
-  const pagination: Pagination = useMemo(
-    () => createPaginationActions(skip, take, totalRows, setSkip, setTake, setTotalRows),
-    [skip, take, totalRows]
-  );
-
-  const inferredMode: DataGridMode =
-    mode ?? (initialTotalRows > initialData.length ? 'server' : 'client');
-
-  const value: DataGridContextType<T> = {
-    mode: inferredMode,
-    data,
-    setData,
-    currentRow,
-    setCurrentRow,
-    selectedRows,
-    setSelectedRows,
-    actionMode,
-    setActionMode,
-    pagination,
+  const value: DataGridContextValue<T> = {
+    data: { ...dataSlice.state, ...dataSlice.controller },
+    actions: { ...actionSlice.state, ...actionSlice.controller },
+    pagination: { ...paginationSlice.state, ...paginationSlice.controller },
+    selection: { ...selectionSlice.state, ...selectionSlice.controller },
+    focus: { ...focusSlice.state, ...focusSlice.controller },
+    mode,
   };
 
   return <DataGridContext.Provider value={value}>{children}</DataGridContext.Provider>;
