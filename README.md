@@ -1,10 +1,9 @@
 # @entiqon/datagrid
 
-[![npm version](https://img.shields.io/npm/v/@entiqon/datagrid?color=blue&label=npm)](https://www.npmjs.com/package/@entiqon/datagrid)
-![npm downloads](https://img.shields.io/npm/dm/@entiqon/datagrid?color=blue)
-![license](https://img.shields.io/github/license/entiqon/datagrid)
-![build](https://img.shields.io/github/actions/workflow/status/entiqon/datagrid/version.yml?label=versioning)
-![release](https://img.shields.io/github/actions/workflow/status/entiqon/datagrid/release.yml?label=release)
+[![npm version](https://img.shields.io/npm/v/@entiqon/datagrid)](https://www.npmjs.com/package/@entiqon/datagrid)
+[![npm downloads](https://img.shields.io/npm/dm/@entiqon/datagrid)](https://www.npmjs.com/package/@entiqon/datagrid)
+[![license](https://img.shields.io/github/license/entiqon/datagrid)](https://github.com/entiqon/datagrid/blob/main/LICENSE)
+![build](https://img.shields.io/github/actions/workflow/status/entiqon/datagrid/publish.yml?branch=main)
 ![release-drafter](https://img.shields.io/github/actions/workflow/status/entiqon/datagrid/release-drafter.yml?label=release-drafter)
 
 A modern, typed, and extensible **DataGrid library for React**, focused on clean architecture, context-driven state, and a UI-agnostic design that allows consumers to implement their own table or grid renderer.
