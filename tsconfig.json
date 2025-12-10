@@ -17,7 +17,8 @@
     "paths": {
       "@context/*": ["src/context/*"],
       "@context": ["src/context/index.ts"],
-      "@contracts": ["src/contracts/index.ts"]
+      "@contracts": ["src/contracts/index.ts"],
+      "@hooks": ["src/hooks/index.ts"]
     }
   },
   "include": ["src"],
