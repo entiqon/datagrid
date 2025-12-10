@@ -2,30 +2,35 @@
 
 [![npm version](https://img.shields.io/npm/v/@entiqon/datagrid)](https://www.npmjs.com/package/@entiqon/datagrid)
 [![npm downloads](https://img.shields.io/npm/dm/@entiqon/datagrid)](https://www.npmjs.com/package/@entiqon/datagrid)
-[![license](https://img.shields.io/github/license/entiqon/datagrid)](https://github.com/entiqon/datagrid/blob/main/LICENSE)
-![build](https://img.shields.io/github/actions/workflow/status/entiqon/datagrid/publish.yml?branch=main)
+![GitHub License](https://img.shields.io/github/license/entiqon/datagrid?style=flat-square)
+![publish](https://img.shields.io/github/actions/workflow/status/entiqon/datagrid/publish.yml?label=publish)
 ![release-drafter](https://img.shields.io/github/actions/workflow/status/entiqon/datagrid/release-drafter.yml?label=release-drafter)
 
-A modern, typed, and extensible **DataGrid library for React**, focused on clean architecture, context-driven state, and a UI-agnostic design that allows consumers to implement their own table or grid renderer.
+A modern, typed, and extensible **DataGrid library for React**, built on:
 
-This version (**0.2.3**) introduces consistent naming, improved barrel exports, and better separation between provider, component, and view renderer.
+- Context-driven modular state
+- Controller/state slices
+- A UI-agnostic design that lets you provide your own table component
+- A rich hook API for interaction, pagination, selection, mode control, and events
+
+This version (**0.3.x**) introduces a fully modular architecture with context slices, a unified provider, and new hooks.
 
 ---
 
-## 🚀 Features
+# 🚀 Features
 
 - ⚛️ **React-first API**
-- 🧠 **Context-driven state architecture**
-- 🧩 **DataGridProvider** with optional external control
-- 🧭 **Modes system (`DataGridMode`)** for workflows
-- 📄 **Pagination, selection & events**
-- 🎨 UI-agnostic: render any table component (`DataGridView` provided as optional abstraction)
-- 🧪 Vitest + Testing Library included
-- 🤖 Automated versioning + releases using **Changesets + GitHub Actions**
+- 🧠 **Context-driven state slices** (data, actions, pagination, selection, focus, mode)
+- 🧩 **DataGridProvider** with external control support
+- 🎛 **Full hook suite** for granular access & composition
+- 🎨 **UI-agnostic**: renderer is fully under your control
+- 🧪 Built-in **Vitest + React Testing Library**
+- 🤖 Automated releases with **Changesets + GitHub Actions**
+- 📦 Tree-shakable ES modules
 
 ---
 
-## 📦 Installation
+# 📦 Installation
 
 ```bash
 npm install @entiqon/datagrid
@@ -39,152 +44,167 @@ yarn add @entiqon/datagrid
 
 ---
 
-# 🧩 Basic Usage
+# 🧩 Usage Overview
+
+## **1. High-Level API — `DataGrid` Component**
 
 ```tsx
 import DataGrid, { DataGridView } from '@entiqon/datagrid';
 
 export default function App() {
   return (
-    <DataGrid columns={columns} data={rows}>
+    <DataGrid data={rows} columns={columns}>
       <DataGridView />
     </DataGrid>
   );
 }
 ```
 
-`DataGrid` initializes state, pagination, mode handling, and event dispatchers.
-
-`DataGridView` is an optional UI abstraction — you can replace it with **your own table implementation**.
-
 ---
 
-# 🧠 Architecture Overview
-
-The library follows a clean, layered structure:
-
-```
-src/
-├── DataGrid.tsx            # Main component (default export)
-├── DataGridView.tsx        # Optional table abstraction
-├── DataGridMode.ts         # Mode system
-├── context/
-│   ├── DataGridContext.tsx
-│   ├── DataGridProvider.tsx
-│   ├── DataGridActions.ts
-│   └── DataGridState.ts
-└── hooks/
-    ├── useDataGrid.ts
-    ├── useDataGridEvents.ts
-    └── usePagination.ts
-```
-
-### Core Elements
-
-#### **DataGrid (default export)**
-
-- Initializes provider
-- Wires state, pagination, events, and modes
-- Accepts any UI renderer via children
-
-#### **DataGridProvider**
-
-Use this if you need full control outside the component.
+## **2. Low-Level API — `DataGridProvider`**
 
 ```tsx
-<DataGridProvider columns={columns} data={rows}>
-  <CustomGridRenderer />
-</DataGridProvider>
-```
+import { DataGridProvider } from '@entiqon/datagrid';
 
-#### **Hooks**
-
-| Hook                  | Purpose                            |
-| --------------------- | ---------------------------------- |
-| `useDataGrid()`       | Access grid state & actions        |
-| `useDataGridEvents()` | Event registration & listeners     |
-| `usePagination()`     | Exposes pagination state & setters |
-
-#### **DataGridMode**
-
-Now renamed to avoid collisions.
-
-```ts
-type DataGridMode = 'create' | 'update' | 'delete' | 'import' | 'reload' | null;
+export default function App() {
+  return (
+    <DataGridProvider data={rows} columns={columns}>
+      <CustomGrid />
+    </DataGridProvider>
+  );
+}
 ```
 
 ---
 
-# 🧭 Roadmap
+# 🎛 Hook API
 
-- 🔧 Column definitions & schemas
-- 🔍 Sorting, filtering, and search state
-- 📌 Row actions API
-- 📦 Virtual scrolling
-- 🎨 Theme abstraction
-- 🛠 Additional unit + integration tests
-- 📘 Full professional documentation (post-1.0)
+## **`useData()`**
+
+```ts
+const { rows, setRows, updateRow, removeRow } = useData();
+```
+
+## **`useActions()`**
+
+```ts
+const { refresh, reload } = useActions();
+```
+
+## **`usePagination()`**
+
+```ts
+const { page, pageSize, total, next, prev, setPage } = usePagination();
+```
+
+## **`useSelection()`**
+
+```tsx
+const { selected, toggle, clear, selectAll } = useSelection();
+```
+
+## **`useFocus()`**
+
+```ts
+const { focusedRow, setFocusedRow } = useFocus();
+```
+
+## **`useGridMode()`**
+
+```ts
+const { mode, setMode, isCreate, isUpdate } = useGridMode();
+```
+
+## **`useCurrentRow()`**
+
+```ts
+const { current } = useCurrentRow();
+```
+
+## **`useGridEvents()`**
+
+```ts
+useGridEvents({
+  onRowClick(row) {},
+  onSelectionChange(selected) {},
+});
+```
+
+## **`useDataGrid()` — Unified hook**
+
+```ts
+const { data, actions, pagination, selection, focus, mode } = useDataGrid();
+```
+
+---
+
+# 🔧 Example: Pagination UI
+
+```tsx
+const { page, next, prev } = usePagination();
+```
+
+---
+
+# 🔍 Example: Row Selection
+
+```tsx
+const { selected, toggle } = useSelection();
+```
+
+---
+
+# 🧭 Example: CRUD Workflow Using `useGridMode`
+
+```tsx
+const { mode, setMode, isCreate } = useGridMode();
+```
+
+---
+
+# 🎨 Example: Custom Grid Renderer
+
+```tsx
+export function MyGrid() {
+  const { data } = useData();
+  const { selected } = useSelection();
+}
+```
+
+---
+
+# ⚙️ TypeScript Path Aliases
+
+```json
+{
+  "paths": {
+    "@context/*": ["src/context/*"],
+    "@contracts": ["src/contracts/index.ts"],
+    "@hooks": ["src/hooks/index.ts"]
+  }
+}
+```
 
 ---
 
 # 🧪 Development
 
-### Run tests
-
 ```bash
 npm test
-```
-
-### Watch mode
-
-```bash
 npm run test:watch
-```
-
-### Build
-
-```bash
 npm run build
 ```
 
 ---
 
-# 🚀 Versioning & Releases (Changesets)
+# 🚀 Versioning & Releases
 
-This project uses:
-
-- **Changesets** for versioning
-- **GitHub Actions** for automated publishing
-- **Release Drafter** for GitHub Release Notes
-
-### ➤ Creating a changeset
-
-```bash
-npx changeset
-```
-
-Choose patch / minor / major, describe your change, and a markdown file will appear in:
-
-```
-.changeset/*.md
-```
-
-### ➤ Publishing (CI)
-
-When merged into `main`, CI:
-
-- Runs `changeset version`
-- Updates `CHANGELOG.md`
-- Bumps `package.json`
-- Creates the GitHub Release draft
-- Publishes to npm
+- Changesets
+- GitHub Actions
 
 ---
 
 # 📝 License
 
 MIT © ENTIQON
-
----
-
-If you find this library useful, consider starring the repository ❤️
