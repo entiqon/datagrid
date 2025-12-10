@@ -15,8 +15,11 @@
     "baseUrl": ".",
     "types": ["vitest/globals"],
     "paths": {
-      "@context/*": ["src/context/*"],
+      "@components": ["src/components/index.ts"],
+      "@components/*": ["src/components/*"],
+      "@components/dialogs/*": ["src/components/dialogs/*"],
       "@context": ["src/context/index.ts"],
+      "@context/*": ["src/context/*"],
       "@contracts": ["src/contracts/index.ts"],
       "@hooks": ["src/hooks/index.ts"]
     }
