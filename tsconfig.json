@@ -12,8 +12,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "baseUrl": "./src",
-    "types": ["vitest/globals"]
+    "baseUrl": ".",
+    "types": ["vitest/globals"],
+    "paths": {
+      "@contracts": ["src/contracts/index.ts"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
