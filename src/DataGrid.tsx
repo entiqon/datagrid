@@ -1,34 +1,28 @@
-// file: src/DataGrid.tsx
+// file: src/components/DataGrid.tsx
 
-'use client';
+import { ReactNode } from 'react';
 
-import DataGridView from './DataGridView';
-import { DataGridProvider } from './context/DataGridProvider';
-import type { Identifiable, DataGridMode } from './context/DataGridState';
-import type { DataGridEventsProps } from './hooks/useGridEvents';
+import { DataGridProvider } from '@context';
+import type { Identifiable } from '@contracts';
+import { DataGridDialogManager } from '@components';
 
-export interface DataGridProps<T extends Identifiable> extends DataGridEventsProps<T> {
-  data: T[];
-  initialTake?: number;
-  initialTotalRows?: number;
-  mode?: DataGridMode;
+interface DataGridProps<T extends Identifiable> {
+  rows: T[];
+  children?: ReactNode;
 }
 
 export default function DataGrid<T extends Identifiable>({
-  data,
-  initialTake = 10,
-  initialTotalRows = data.length,
-  mode,
-  ...events
+  rows,
+  children,
 }: DataGridProps<T>) {
   return (
-    <DataGridProvider<T>
-      initialData={data}
-      initialTake={initialTake}
-      initialTotalRows={initialTotalRows}
-      mode={mode}
-    >
-      <DataGridView<T> {...events} />
+    <DataGridProvider<T> initialRows={rows}>
+      {children}
+
+      <DataGridDialogManager
+        onSubmit={() => console.log('Form submitted!')}
+        renderForm={(_) => <>FormDialog</>}
+      />
     </DataGridProvider>
   );
 }
