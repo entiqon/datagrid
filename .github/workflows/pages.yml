@@ -1,34 +1,20 @@
-name: Publish Coverage Badge
+name: pages
 
 on:
   workflow_run:
-    workflows: ["Coverage Badge"]
-    types:
-      - completed
+    workflows: ["coverage"]
+    types: [completed]
+
+permissions:
+  pages: write
+  id-token: write
+  contents: read
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Download artifact
-        uses: actions/download-artifact@v6
-        with:
-          name: coverage-badge
-          path: public
-
-      - name: Deploy JSON to GitHub Pages
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: public
-
-  publish:
-    needs: deploy
-    permissions:
-      pages: write
-      id-token: write
-    uses: actions/deploy-pages@v4
+      - name: Deploy GitHub Pages artifact
+        uses: actions/deploy-pages@v4

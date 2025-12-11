@@ -1,17 +1,16 @@
-name: Coverage Badge
+name: coverage
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
 
 jobs:
-  coverage:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v6
 
       - name: Setup Node
@@ -19,25 +18,21 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install deps
+      - name: Install dependencies
         run: npm ci
 
       - name: Run tests with coverage
-        run: npx vitest --coverage
+        run: npx vitest run --coverage
 
-      - name: Extract coverage %
-        id: coverage
+      - name: Extract coverage percentage
+        id: extract
         run: |
+          mkdir -p public
           pct=$(jq '.total.statements.pct' coverage/coverage-summary.json)
-          echo "coverage=$pct" >> $GITHUB_OUTPUT
+          echo "{\"schemaVersion\":1,\"label\":\"coverage\",\"message\":\"${pct}%\",\"color\":\"brightgreen\"}" \
+            > public/coverage.json
 
-      - name: Create badge JSON
-        run: |
-          mkdir -p .badges
-          echo "{\"schemaVersion\":1,\"label\":\"coverage\",\"message\":\"${{ steps.coverage.outputs.coverage }}%\",\"color\":\"brightgreen\"}" > .badges/coverage.json
-
-      - name: Upload badge artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v4
         with:
-          name: coverage-badge
-          path: .badges/coverage.json
+          path: public
