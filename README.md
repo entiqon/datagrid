@@ -5,6 +5,8 @@
 ![GitHub License](https://img.shields.io/github/license/entiqon/datagrid?style=flat-square)
 ![publish](https://img.shields.io/github/actions/workflow/status/entiqon/datagrid/publish.yml?label=publish)
 ![release-drafter](https://img.shields.io/github/actions/workflow/status/entiqon/datagrid/release-drafter.yml?label=release-drafter)
+![Tests](https://github.com/entiqon/datagrid/actions/workflows/test.yml/badge.svg)
+![Coverage](https://img.shields.io/endpoint?url=https://entiqon.github.io/datagrid/coverage.json)
 
 A modern, typed, and extensible **DataGrid library for React**, built on:
 
