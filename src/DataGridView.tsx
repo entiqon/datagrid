@@ -1,20 +1,14 @@
-// file: src/DataGridView.tsx
+/**
+ * @file: src/DataGridView.tsx
+ */
 
 'use client';
 
 import { useMemo } from 'react';
-import { useDataGrid } from './hooks/useDataGrid';
-import type { Identifiable } from './context/DataGridState';
-import { useGridEvents, DataGridEventsProps } from './hooks/useGridEvents';
+import { useDataGrid } from '@hooks/useDataGrid';
+import type { Identifiable } from '@contracts';
 
-export type DataGridViewProps<T extends Identifiable> = DataGridEventsProps<T>;
-
-export default function DataGridView<T extends Identifiable>(
-  props: DataGridViewProps<T>
-) {
-  // Wire external events (only meaningful in server mode)
-  useGridEvents<T>(props);
-
+export default function DataGridView<T extends Identifiable>() {
   const grid = useDataGrid<T>();
   const { mode, data, pagination } = grid;
 
@@ -22,7 +16,7 @@ export default function DataGridView<T extends Identifiable>(
     if (mode === 'client') {
       const start = pagination.skip;
       const end = start + pagination.take;
-      return data.slice(start, end);
+      return data.rows.slice(start, end);
     }
     // In server mode, assume `data` already reflects the correct page
     return data;

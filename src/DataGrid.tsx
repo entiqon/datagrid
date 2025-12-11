@@ -15,6 +15,10 @@ export default function DataGrid<T extends Identifiable>({
   rows,
   children,
 }: DataGridProps<T>) {
+  if (!rows || rows.length === 0) {
+    return <div>No data</div>;
+  }
+
   return (
     <DataGridProvider<T> initialRows={rows}>
       {children}
