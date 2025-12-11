@@ -19,19 +19,17 @@ jobs:
 
       - run: npx vitest run --coverage
 
-      - name: Generate multi-metric coverage badge JSON
+      - name: Generate simplified coverage badge JSON
         run: |
           mkdir -p public
 
-          statements=$(jq '.total.statements.pct' coverage/coverage-summary.json)
-          branches=$(jq '.total.branches.pct' coverage/coverage-summary.json)
-          functions=$(jq '.total.functions.pct' coverage/coverage-summary.json)
-          lines=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+          pct=$(jq '.total.statements.pct' coverage/coverage-summary.json)
 
-          # dynamic color based on statement percentage
-          if (( $(printf "%.0f" $statements) < 60 )); then
+          pct_int=$(printf "%.0f" $pct)
+
+          if (( pct_int < 60 )); then
             color="red"
-          elif (( $(printf "%.0f" $statements) < 80 )); then
+          elif (( pct_int < 80 )); then
             color="yellow"
           else
             color="brightgreen"
@@ -40,7 +38,7 @@ jobs:
           echo "{
             \"schemaVersion\": 1,
             \"label\": \"coverage\",
-            \"message\": \"Stmts: ${statements}% | Br: ${branches}% | Fn: ${functions}% | Ln: ${lines}%\",
+            \"message\": \"${pct_int}%\",
             \"color\": \"${color}\"
           }" > public/coverage.json
 
