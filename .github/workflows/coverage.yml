@@ -1,8 +1,13 @@
-name: coverage
+name: coverage-pages
 
 on:
   push:
     branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -16,24 +21,17 @@ jobs:
           node-version: 20
 
       - run: npm ci
-
       - run: npx vitest run --coverage
 
       - name: Generate simplified coverage badge JSON
         run: |
           mkdir -p public
-
           pct=$(jq '.total.statements.pct' coverage/coverage-summary.json)
-
           pct_int=$(printf "%.0f" $pct)
 
-          if (( pct_int < 60 )); then
-            color="red"
-          elif (( pct_int < 80 )); then
-            color="yellow"
-          else
-            color="brightgreen"
-          fi
+          if (( pct_int < 60 )); then color="red";
+          elif (( pct_int < 80 )); then color="yellow";
+          else color="brightgreen"; fi
 
           echo "{
             \"schemaVersion\": 1,
@@ -43,7 +41,19 @@ jobs:
           }" > public/coverage.json
 
       - name: Upload artifact for Pages
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-pages-artifact@v4
         with:
-          name: github-pages
           path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
