@@ -21,7 +21,7 @@ export default function DataGrid<T extends Identifiable>({
 
       <DataGridDialogManager
         onSubmit={() => console.log('Form submitted!')}
-        renderForm={(_) => <>FormDialog</>}
+        renderForm={() => <>FormDialog</>}
       />
     </DataGridProvider>
   );

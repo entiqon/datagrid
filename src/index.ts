@@ -5,13 +5,17 @@
  * MIT Licensed
  */
 
-// file: src/index.ts
+// DataGrid component
+export { default } from './DataGrid';
 
-// components
-export { default as DataGrid } from './DataGrid';
+// Components (Sheet, DialogManager, DataGridView, etc.)
+export * from './components';
 
-// Core types
+// Context slices, provider, actions
 export * from './context';
 
-// Core hooks
+// Hooks
 export * from './hooks';
+
+// Contracts / types
+export * from './contracts';
