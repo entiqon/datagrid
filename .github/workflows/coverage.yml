@@ -19,13 +19,33 @@ jobs:
 
       - run: npx vitest run --coverage
 
-      - name: Generate coverage badge JSON
+      - name: Generate multi-metric coverage badge JSON
         run: |
           mkdir -p public
-          pct=$(jq '.total.statements.pct' coverage/coverage-summary.json)
-          echo "{\"schemaVersion\":1,\"label\":\"coverage\",\"message\":\"${pct}%\",\"color\":\"brightgreen\"}" > public/coverage.json
 
-      - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v4
+          statements=$(jq '.total.statements.pct' coverage/coverage-summary.json)
+          branches=$(jq '.total.branches.pct' coverage/coverage-summary.json)
+          functions=$(jq '.total.functions.pct' coverage/coverage-summary.json)
+          lines=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+
+          # dynamic color based on statement percentage
+          if (( $(printf "%.0f" $statements) < 60 )); then
+            color="red"
+          elif (( $(printf "%.0f" $statements) < 80 )); then
+            color="yellow"
+          else
+            color="brightgreen"
+          fi
+
+          echo "{
+            \"schemaVersion\": 1,
+            \"label\": \"coverage\",
+            \"message\": \"Stmts: ${statements}% | Br: ${branches}% | Fn: ${functions}% | Ln: ${lines}%\",
+            \"color\": \"${color}\"
+          }" > public/coverage.json
+
+      - name: Upload artifact for Pages
+        uses: actions/upload-artifact@v5
         with:
+          name: github-pages
           path: public
