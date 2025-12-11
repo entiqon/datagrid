@@ -1,0 +1,31 @@
+name: coverage
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      - run: npx vitest run --coverage
+
+      - name: Generate coverage badge JSON
+        run: |
+          mkdir -p public
+          pct=$(jq '.total.statements.pct' coverage/coverage-summary.json)
+          echo "{\"schemaVersion\":1,\"label\":\"coverage\",\"message\":\"${pct}%\",\"color\":\"brightgreen\"}" > public/coverage.json
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: public

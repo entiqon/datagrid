@@ -16,5 +16,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy GitHub Pages artifact
+      - name: Deploy GitHub Pages
         uses: actions/deploy-pages@v4
