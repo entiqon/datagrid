@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { createPortal } from 'react-dom';
 
 interface SheetProps {
   open: boolean;
@@ -10,31 +11,47 @@ interface SheetProps {
 }
 
 export function Sheet({ open, onOpenChange, side = 'right', children }: SheetProps) {
-  return (
+  // Don’t render anything if closed
+  if (!open) return null;
+
+  // Close on ESC
+  React.useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onOpenChange(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onOpenChange]);
+
+  // Portal everything to body to avoid stacking-context issues
+  return createPortal(
     <>
-      {/* Overlay (non-interactive) */}
-      {open && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.32)',
-            zIndex: 1000,
-            pointerEvents: 'none',
-          }}
-        />
-      )}
+      {/* Overlay */}
+      <div
+        data-testid="sheet-overlay"
+        onClick={() => onOpenChange(false)}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.32)',
+          zIndex: 40, // lower than most popovers/selects
+        }}
+      />
 
       {/* Drawer */}
       <div
+        data-testid="sheet-drawer"
         style={{
           position: 'fixed',
-          zIndex: 1001,
+          zIndex: 50,
           background: 'white',
-          transition: 'transform 0.28s cubic-bezier(0.32, 0.72, 0, 1)',
           display: 'flex',
           flexDirection: 'column',
+          // keep content visible, only SheetContent scrolls
           overflow: 'hidden',
+          transition: 'transform 0.28s cubic-bezier(0.32, 0.72, 0, 1)',
 
           ...(side === 'bottom'
             ? {
@@ -44,7 +61,7 @@ export function Sheet({ open, onOpenChange, side = 'right', children }: SheetPro
                 height: '70vh',
                 borderTopLeftRadius: 14,
                 borderTopRightRadius: 14,
-                transform: open ? 'translateY(0)' : 'translateY(110%)',
+                transform: 'translateY(0)',
                 boxShadow: '0 -8px 16px rgba(0,0,0,0.15)',
               }
             : {
@@ -52,14 +69,17 @@ export function Sheet({ open, onOpenChange, side = 'right', children }: SheetPro
                 bottom: 0,
                 right: 0,
                 width: '380px',
-                transform: open ? 'translateX(0)' : 'translateX(110%)',
+                transform: 'translateX(0)',
                 boxShadow: '-8px 0 16px rgba(0,0,0,0.15)',
               }),
         }}
+        // prevent overlay click from bubbling
+        onClick={(e) => e.stopPropagation()}
       >
         {children}
       </div>
-    </>
+    </>,
+    document.body
   );
 }
 
@@ -84,7 +104,7 @@ export function SheetHeader({
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         borderBottom: '1px solid #f0f0f0',
-        flexShrink: 0, // ❗ Prevents shrinking (fixed)
+        flexShrink: 0,
       }}
     >
       <div>
@@ -100,7 +120,6 @@ export function SheetHeader({
         style={{
           border: 'none',
           background: 'transparent',
-
           padding: 4,
           marginLeft: 12,
           cursor: 'pointer',
@@ -124,8 +143,8 @@ export function SheetContent({ children }: { children: React.ReactNode }) {
     <div
       style={{
         padding: '20px',
-        flex: 1, // ❗ Content grows
-        overflowY: 'auto', // ❗ Scrollable
+        flex: 1,
+        overflowY: 'auto', // only this scrolls
       }}
     >
       {children}
@@ -147,7 +166,7 @@ export function SheetFooter({ children }: { children: React.ReactNode }) {
         display: 'flex',
         justifyContent: 'flex-end',
         gap: '10px',
-        flexShrink: 0, // ❗ Prevents shrinking (fixed)
+        flexShrink: 0,
       }}
     >
       {children}

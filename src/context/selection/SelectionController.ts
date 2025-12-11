@@ -1,34 +1,49 @@
-// file: src/components/datagrid/context/selection/SelectionController.ts
+/**
+ * @file: src/components/datagrid/context/selection/SelectionController.ts
+ */
 
 import type { Identifiable } from '@contracts';
 
 /**
- * Behavior-only controller for DataGrid row selection.
+ * Behavior-only controller for managing selected row identifiers.
  *
- * Provides mutation utilities and derived helpers for UI.
+ * All operations are ID-based; rows are handled at a higher level
+ * (e.g. DataGridView) and mapped to IDs before calling these methods.
  */
 export interface SelectionController<T extends Identifiable> {
-  /** Toggle selection of a row */
+  /** Select a single ID (no-op if already selected) */
+  select: (id: T['id']) => void;
+
+  /** Deselect a single ID (no-op if not selected) */
+  deselect: (id: T['id']) => void;
+
+  /** Toggle selection state of a single ID */
   toggle: (id: T['id']) => void;
 
-  /** Select a specific set of IDs */
+  /** Replace the entire selection with the given IDs */
   set: (ids: Array<T['id']>) => void;
 
-  /** Clear all selected rows */
+  /** Add many IDs to the selection (merged, de-duplicated) */
+  selectMany: (ids: Array<T['id']>) => void;
+
+  /** Remove many IDs from the selection */
+  deselectMany: (ids: Array<T['id']>) => void;
+
+  /** Clear all selected IDs */
   clear: () => void;
 
-  /** Check if a row is selected */
+  /** Convenience alias: replaces selection with provided IDs */
+  selectAll: (ids: Array<T['id']>) => void;
+
+  /** Check if a given ID is currently selected */
   isSelected: (id: T['id']) => boolean;
 
-  /** Select all rows from the provided list */
-  selectAll: (rows: T[]) => void;
-
-  /** Number of selected rows */
+  /** Total number of selected IDs */
   count: number;
 
-  /** True if no rows are selected */
+  /** True when no IDs are selected */
   isEmpty: boolean;
 
-  /** True if at least one row is selected */
+  /** True when at least one ID is selected */
   hasSelection: boolean;
 }

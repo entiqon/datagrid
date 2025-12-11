@@ -1,2 +1,2 @@
 export * from './datagrid';
-export * from './Sheet';
+export * from './sheet';
