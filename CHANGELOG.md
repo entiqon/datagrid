@@ -1,5 +1,11 @@
 # @entiqon/datagrid
 
+## 0.4.1
+
+### Patch Changes
+
+- 9c88a4d: Fix build alias resolution and tsconfig compatibility for module bundling
+
 ## 0.4.0
 
 ### Minor Changes
