@@ -1,5 +1,11 @@
 # @entiqon/datagrid
 
+## 0.4.2
+
+### Patch Changes
+
+- 164032e: Fix broken barrel exports and invalid paths causing CI alias resolution errors
+
 ## 0.4.1
 
 ### Patch Changes
