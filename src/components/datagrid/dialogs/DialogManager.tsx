@@ -3,11 +3,7 @@
 import { ReactNode } from 'react';
 import { useActions } from '@hooks';
 import { Sheet, SheetContent, SheetFooter, SheetHeader } from '@components';
-
-interface FormContext {
-  onSubmit: () => Promise<void> | void;
-  onCancel: () => void;
-}
+import { FormContext } from '@contracts/action-context';
 
 interface DataGridDialogsProps {
   renderForm: (ctx: FormContext) => ReactNode;

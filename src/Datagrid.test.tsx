@@ -16,7 +16,8 @@ vi.mock('@hooks', () => ({
 describe('DataGrid', () => {
   it('renders empty state when no rows', () => {
     render(<DataGrid rows={[]} />);
-    expect(screen.getByText('No data')).toBeInTheDocument();
+
+    expect(screen.getByText('There are no rows to display.')).toBeInTheDocument();
   });
 
   it('does not render children when empty', () => {
